@@ -792,7 +792,7 @@ int ODLAEngine::ODLAEnginePreRun(struct subgraph* subgraph)
             }
 
             done = !engineASTList.back()->dirty();
-            ASSERT(done);
+            assert(done);
         }
         auto finalEngineAST = engineASTList.back();
 

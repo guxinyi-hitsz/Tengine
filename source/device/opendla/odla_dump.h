@@ -33,6 +33,7 @@ struct subgraph;
 
 #define TENGINE_DUMP_DIR   "TG_DEBUG_DUMP_DIR"
 #define TENGINE_DUMP_LAYER "TG_DEBUG_DATA"
+#define OPENDLA_LOG_
 
 void extract_feature_from_tensor_odla(const char* comment, const char* layer_name, const struct tensor* tensor);
 

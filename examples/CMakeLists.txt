@@ -107,6 +107,7 @@ ENDIF()
 
 # add examples with opencv
 # set(OpenCV_DIR /mnt/d/ubuntu/opencv_install/linux-armv7/lib/cmake/opencv4)
+set(OpenCV_DIR /usr/local/opencv-3.4.13)
 FIND_PACKAGE(OpenCV)
 
 IF (OpenCV_FOUND)
@@ -149,7 +150,9 @@ IF (OpenCV_FOUND)
     TENGINE_EXAMPLE_CV (tm_nanodet_m             tm_nanodet_m.cpp)
     TENGINE_EXAMPLE_CV (tm_yolox                 tm_yolox.cpp)
     TENGINE_EXAMPLE_CV (tm_yolox_int8            tm_yolox_int8.cpp)
+    IF(TENGINE_ENABLE_OPENDLA)
     TENGINE_EXAMPLE_CV (tm_yolox_opendla         tm_yolox_opendla.cpp)
+    ENDIF()
     TENGINE_EXAMPLE_CV (tm_yolox_darknet53       tm_yolox_darknet53.cpp)
     TENGINE_EXAMPLE_CV (tm_scrfd                 tm_scrfd.cpp)
     TENGINE_EXAMPLE_CV (tm_segformer             tm_segformer.cpp)

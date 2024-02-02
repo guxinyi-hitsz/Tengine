@@ -45,6 +45,7 @@ extern "C" {
 #include "odla_dump.h"
 }
 
+#include <cassert>
 #include <map>
 #include <algorithm>
 #include <iomanip>
@@ -68,7 +69,7 @@ extern "C" {
 
 #define OPENDLA_DUMP_LAYER "TG_ODLA_DEBUG_DATA"
 
-//#define OPENDLA_DEBUG_DATA
+#define OPENDLA_DEBUG_DATA
 
 typedef std::map<uint32_t, nvdla::priv::Tensor*> dict_irt2odlat;
 typedef std::map<nvdla::priv::canonical_ast::Node*, struct node*, nvdla::priv::canonical_ast::Graph::nodeCompareFn> dict_odlan2irtn;
