@@ -198,7 +198,7 @@ static int run(struct device* dev, struct subgraph* subgraph)
                 extract_feature_from_tensor("out", name, output_tensor);
         }
 
-//#define DUMP_NODE_OUTPUT
+#define DUMP_NODE_OUTPUT
 #ifdef DUMP_NODE_OUTPUT
         /* dump the node output */
         struct node* ir_node = node->ir_node;
@@ -209,7 +209,7 @@ static int run(struct device* dev, struct subgraph* subgraph)
             char fname[128];
             struct tensor* ir_tensor = get_ir_graph_tensor(ir_graph, ir_node->input_tensors[i]);
 
-            sprintf(fname, "/tmp/dump/node%s%d.%d", (ir_node->idx < 10 ? "0" : ""), ir_node->idx, i);
+            sprintf(fname, "/tmp/dump/node%s%d.%d", (ir_node->index < 10 ? "0" : ""), ir_node->index, i);
 
             dump_float(fname, ir_tensor->data, ir_tensor->elem_num);
         }
