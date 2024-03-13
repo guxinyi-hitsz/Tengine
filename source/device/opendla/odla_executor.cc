@@ -29,7 +29,7 @@
 
 void ODLAEngine::odla_input_data_convert(void * dst, const void * src, nvdla::IRuntime::NvDlaTensor tDesc) const{
 #ifdef OPENDLA_DEBUG_DATA
-    fprintf(stdout, "%s Entrance.\n", __func__ );
+    //fprintf(stdout, "%s Entrance.\n", __func__ );
 #endif
     uint32_t max_thread = std::thread::hardware_concurrency();
     uint32_t batch  = tDesc.dims.n;
@@ -65,7 +65,7 @@ void ODLAEngine::odla_input_data_convert(void * dst, const void * src, nvdla::IR
 void ODLAEngine::odla_output_data_convert(void * dst, const void * src, nvdla::IRuntime::NvDlaTensor tDesc) const
 {
 #ifdef OPENDLA_DEBUG_DATA
-    fprintf(stdout, "%s Entrance.\n", __func__ );
+    //fprintf(stdout, "%s Entrance.\n", __func__ );
 #endif
     uint32_t max_thread = std::thread::hardware_concurrency();
     uint32_t batch = tDesc.dims.n;
@@ -98,7 +98,7 @@ void ODLAEngine::odla_output_data_convert(void * dst, const void * src, nvdla::I
 
 NvDlaError ODLAEngine::ODLAConfigGenerate(){
 #ifdef OPENDLA_DEBUG_DATA
-    fprintf(stdout, "%s Entrance.\n", __func__ );
+    //fprintf(stdout, "%s Entrance.\n", __func__ );
 #endif
     NvDlaError e = NvDlaSuccess;
 
@@ -178,7 +178,7 @@ ODLAEngine::ODLAEngine()
 int ODLAEngine::ODLATensorMap(struct graph* ir_graph, int ir_tensor_idx, int spec_type)
 {
 #ifdef OPENDLA_DEBUG_DATA
-    fprintf(stdout, "%s Entrance.\n", __func__ );
+    //fprintf(stdout, "%s Entrance.\n", __func__ );
 #endif
     auto iter = this->odla_tensor_map.find(ir_tensor_idx);
 
@@ -395,7 +395,7 @@ int ODLAEngine::ODLATensorMap(struct graph* ir_graph, int ir_tensor_idx, int spe
 int ODLAEngine::Build(struct subgraph* subgraph)
 {
 #ifdef OPENDLA_DEBUG_DATA
-    fprintf(stdout, "%s Entrance.\n", __func__ );
+    //fprintf(stdout, "%s Entrance.\n", __func__ );
 #endif
     struct graph* ir_graph = subgraph->graph;
     std::vector<nvdla::priv::Tensor *> graphInputs;
@@ -588,9 +588,11 @@ int ODLAEngine::Build(struct subgraph* subgraph)
 int ODLAEngine::ODLAEnginePreRun(struct subgraph* subgraph)
 {
 #ifdef OPENDLA_DEBUG_DATA
+    set_log_level(LOG_INFO);
     dump_sub_graph_odla(subgraph);
     fprintf(stdout, "%s Entrance.\n", __func__ );
 #endif
+    set_log_level(LOG_ERR);
     NvDlaError e = NvDlaSuccess;
     struct graph* ir_graph = subgraph->graph;
     /* Add OpenDLA Tensor */
@@ -679,6 +681,8 @@ int ODLAEngine::ODLAEnginePreRun(struct subgraph* subgraph)
             fprintf(stderr, "Failed compilation phase: generateGraph. \n");
             engineASTList.pop_back();
             return -1;
+        }else{
+            fprintf(stdout, "%s Done compilation phase: generateGraph. \n", __func__ );
         }
 
         engineASTList.push_back(this->compiler.priv()->registerBuffers(engineASTList.back()));
@@ -686,6 +690,8 @@ int ODLAEngine::ODLAEnginePreRun(struct subgraph* subgraph)
             fprintf(stderr, "Failed compilation phase: registerBuffers. \n");
             engineASTList.pop_back();
             return -1;
+        }else{
+            fprintf(stdout, "%s Done compilation phase: registerBuffers. \n", __func__ );
         }
 
         engineASTList.push_back(this->compiler.priv()->preProcessAuxData(engineASTList.back()));
@@ -693,60 +699,84 @@ int ODLAEngine::ODLAEnginePreRun(struct subgraph* subgraph)
             fprintf(stderr, "Failed compilation phase: preProcessAuxData. \n");
             engineASTList.pop_back();
             return -1;
+        }else{
+            fprintf(stdout, "%s Done compilation phase: preProcessAuxData. \n", __func__ );
         }
+
         engineASTList.push_back(this->compiler.priv()->mergeActivationOperations(engineASTList.back()));
         if(!engineASTList.back()){
             fprintf(stderr, "Failed compilation phase: mergeActivationOperations. \n");
             engineASTList.pop_back();
             return -1;
+        }else{
+            fprintf(stdout, "%s Done compilation phase: mergeActivationOperations. \n", __func__ );
         }
+
         engineASTList.push_back(this->compiler.priv()->updateScalingFactors(engineASTList.back()));
         if(!engineASTList.back()){
             fprintf(stderr, "Failed compilation phase: updateScalingFactors. \n");
             engineASTList.pop_back();
             return -1;
+        }else{
+            fprintf(stdout, "%s Done compilation phase: updateScalingFactors. \n", __func__ );
         }
+
         engineASTList.push_back(this->compiler.priv()->quantizeAuxData(engineASTList.back()));
         if(!engineASTList.back()){
             fprintf(stderr, "Failed compilation phase: quantizeAuxData. \n");
             engineASTList.pop_back();
             return -1;
+        }else{
+            fprintf(stdout, "%s Done compilation phase: quantizeAuxData. \n", __func__ );
         }
+
         engineASTList.push_back(this->compiler.priv()->fuseOnTheFlyNodes(engineASTList.back()));
         if(!engineASTList.back()){
             fprintf(stderr, "Failed compilation phase: fuseOnTheFlyNodes. \n");
             engineASTList.pop_back();
             return -1;
+        }else{
+            fprintf(stdout, "%s Done compilation phase: fuseOnTheFlyNodes. \n", __func__ );
         }
         engineASTList.push_back(this->compiler.priv()->handleLowPrecisionConversions(engineASTList.back()));
         if(!engineASTList.back()){
             fprintf(stderr, "Failed compilation phase: handleLowPrecisionConversions. \n");
             engineASTList.pop_back();
             return -1;
+        }else{
+            fprintf(stdout, "%s Done compilation phase: handleLowPrecisionConversions. \n", __func__ );
         }
         engineASTList.push_back(this->compiler.priv()->translateAuxData(engineASTList.back()));
         if(!engineASTList.back()){
             fprintf(stderr, "Failed compilation phase: translateAuxData. \n");
             engineASTList.pop_back();
             return -1;
+        }else{
+            fprintf(stdout, "%s Done compilation phase: translateAuxData. \n", __func__ );
         }
         engineASTList.push_back(this->compiler.priv()->reserveBuffers(engineASTList.back()));
         if(!engineASTList.back()){
             fprintf(stderr, "Failed compilation phase: reserveBuffers. \n");
             engineASTList.pop_back();
             return -1;
+        }else{
+            fprintf(stdout, "%s Done compilation phase: reserveBuffers. \n", __func__ );
         }
         engineASTList.push_back(this->compiler.priv()->splitNodes(engineASTList.back()));
         if(!engineASTList.back()){
             fprintf(stderr, "Failed compilation phase: splitNodes. \n");
             engineASTList.pop_back();
             return -1;
+        }else{
+            fprintf(stdout, "%s Done compilation phase: splitNodes. \n", __func__ );
         }
 
         engineASTList.push_back(this->compiler.priv()->fuseSubEngineOps(engineASTList.back()));
         if(!engineASTList.back()){
             fprintf(stderr, "Failed compilation phase: fuseSubEngineOps. \n");
             engineASTList.pop_back();
+        }else{
+            fprintf(stdout, "%s Done compilation phase: fuseSubEngineOps. \n", __func__ );
         }
 
         engineASTList.push_back(this->compiler.priv()->boundGraph(engineASTList.back()));
@@ -754,6 +784,8 @@ int ODLAEngine::ODLAEnginePreRun(struct subgraph* subgraph)
             fprintf(stderr, "Failed compilation phase: boundGraph. \n");
             engineASTList.pop_back();
             return -1;
+        }else{
+            fprintf(stdout, "%s Done compilation phase: boundGraph. \n", __func__ );
         }
 
         engineASTList.push_back(this->compiler.priv()->handleMultiBatch(engineASTList.back()));
@@ -761,6 +793,8 @@ int ODLAEngine::ODLAEnginePreRun(struct subgraph* subgraph)
             fprintf(stderr, "Failed compilation phase: handleMultiBatch. \n");
             engineASTList.pop_back();
             return -1;
+        }else{
+            fprintf(stdout, "%s Done compilation phase: handleMultiBatch. \n", __func__ );
         }
 
         if (this->profile->copyOutDebugSurfaces()){
@@ -769,6 +803,8 @@ int ODLAEngine::ODLAEnginePreRun(struct subgraph* subgraph)
                 fprintf(stderr, "Failed compilation phase: enableCopyOutDebugSurfaces. \n");
                 engineASTList.pop_back();
                 return -1;
+            }else{
+                fprintf(stdout, "%s Done compilation phase: enableCopyOutDebugSurfaces. \n", __func__ );
             }
         }
 
@@ -783,12 +819,16 @@ int ODLAEngine::ODLAEnginePreRun(struct subgraph* subgraph)
                 fprintf(stderr, "Failed compilation phase: generateDependencyParams. \n");
                 engineASTList.pop_back();
                 return -1;
+            }else{
+                fprintf(stdout, "%s Done compilation phase: generateDependencyParams. \n", __func__ );
             }
             engineASTList.push_back(this->compiler.priv()->resolveMemory(engineASTList.back(),topological_order));
             if(!engineASTList.back()){
                 fprintf(stderr, "Failed compilation phase: resolveMemory. \n");
                 engineASTList.pop_back();
                 return -1;
+            }else{
+                fprintf(stdout, "%s Done compilation phase: resolveMemory. \n", __func__ );
             }
 
             done = !engineASTList.back()->dirty();
@@ -956,7 +996,7 @@ fail:
 int ODLAEngine::ODLAEngineRun(struct subgraph* subgraph)
 {
 #ifdef OPENDLA_DEBUG_DATA
-    fprintf(stdout, "%s Entrance.\n", __func__ );
+    fprintf(stdout, "%s Entrance: subgraph_%d\n", __func__, (int)subgraph->index);
 #endif
 
     NvDlaError e;
@@ -997,7 +1037,7 @@ int ODLAEngine::ODLAEngineRun(struct subgraph* subgraph)
 #ifdef OPENDLA_DEBUG_DATA
         elapsedTime = t2.tv_sec - t1.tv_sec;
         elapsedTime += (t2.tv_usec - t1.tv_usec) / 1000000.0;
-        fprintf(stdout ,"NVDLA time: %f seconds\n", elapsedTime);
+        fprintf(stdout ,"subgraph_%d NVDLA time: %f seconds\n", (int)subgraph->index, elapsedTime);
 #endif
 
 
