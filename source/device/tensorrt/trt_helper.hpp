@@ -100,7 +100,7 @@ public:
     Logger(nvinfer1::ILogger::Severity severity = nvinfer1::ILogger::Severity::kINFO)
         : severity_(severity){};
 
-    void log(Severity severity, const char* msg) override
+    void log(Severity severity, const char* msg) noexcept override
     {
         if (severity <= this->severity_)
         {
