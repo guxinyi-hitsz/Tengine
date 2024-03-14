@@ -88,7 +88,7 @@ const int trt_supported_ops[] = {
 //        OP_GRU,
 #endif
     //        OP_HARDSIGMOID,
-    //        OP_HARDSWISH,                   // Not supported, last checked version 7.1.3
+    OP_HARDSWISH,                   // Not supported, last checked version 7.1.3
     OP_INPUT,
     OP_INSTANCENORM,
     OP_INTERP, // should be as UpSample
